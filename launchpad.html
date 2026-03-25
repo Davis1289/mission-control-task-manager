@@ -406,6 +406,7 @@ header{
   <div class="gap"></div>
   <button class="btn btn-sm" onclick="openFW()" style="color:var(--text-muted)">The FORGE Method</button>
   <button class="btn btn-sm" onclick="openImport()">⇑ Import</button>
+  <button class="btn btn-sm" onclick="exportJSON()">⇓ Export JSON</button>
   <button class="btn btn-accent btn-sm" onclick="openAdd()">+ New Project</button>
 </div>
 
@@ -773,6 +774,24 @@ function delProj(id) {
   if(!confirm('Remove this project?')) return;
   S.projects=S.projects.filter(p=>p.id!==id);
   if(S.focusId===id) S.focusId=null; save(); render();
+}
+
+// BACKUP EXPORT
+function exportJSON() {
+  const pad2 = n => String(n).padStart(2,'0');
+  const d = new Date();
+  const stamp =
+    `${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}_`+
+    `${pad2(d.getHours())}${pad2(d.getMinutes())}${pad2(d.getSeconds())}`;
+  const filename = `launchpad-backup-${stamp}.json`;
+  const blob = new Blob([JSON.stringify(S, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1500);
 }
 
 // IDEAS
